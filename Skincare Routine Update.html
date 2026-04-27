@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ritual</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root {
+  /* Base */
+  --bg:        #ede8f5;
+  --bg2:       #e8e2f2;
+  --card:      #ffffff;
+  --border:    #ddd6ef;
+  --border2:   #ece7f7;
+
+  /* Text */
+  --txt-deep:  #2a1f3d;
+  --txt-mid:   #6b5e8a;
+  --txt-soft:  #a898c4;
+
+  /* Accent */
+  --accent:    #d8d2e8;
+  --accent-bg: #fbfaf7;
+
+  /* Step badges */
+  --damp-bg:   #ddedf8;
+  --damp-txt:  #3a6e90;
+  --dry-bg:    #f5ede8;
+  --dry-txt:   #8a6050;
+  --wait-bg:   #e8f3ec;
+  --wait-txt:  #3d7856;
+  --warn-bg:   #fce8ec;
+  --warn-txt:  #a03858;
+  --safe-bg:   #e8f0fb;
+  --safe-txt:  #3a5c90;
+
+  /* Active night types */
+  --ret-bg:    #fbfaf7;  --ret-txt: #5a3d8a;
+  --lac-bg:    #f8fbf8;  --lac-txt: #2d7050;
+  --rec-bg:    #fafcff;  --rec-txt: #2d5c84;
+  --sal-bg:    #fff9f8;  --sal-txt: #8a3850;
+
+  --radius-sm: 12px;
+  --radius:    18px;
+  --radius-lg: 24px;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--txt-deep);
+  overflow: hidden;
+}
+
+/* ── SCREEN TRANSITIONS ─────────── */
+.screen {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg);
+}
+.screen.hidden { display: none; }
+.screen.entering { animation: enterFwd .32s cubic-bezier(.22,1,.36,1) both; }
+.screen.leaving  { animation: leaveFwd .24s ease both; }
+.screen.entering-back { animation: enterBack .32s cubic-bezier(.22,1,.36,1) both; }
+.screen.leaving-back  { animation: leaveBack .24s ease both; }
+
+@keyframes enterFwd    { from{opacity:0;transform:translateX(28px)}  to{opacity:1;transform:none} }
+@keyframes leaveFwd    { from{opacity:1;transform:none}  to{opacity:0;transform:translateX(-20px)} }
+@keyframes enterBack   { from{opacity:0;transform:translateX(-28px)} to{opacity:1;transform:none} }
+@keyframes leaveBack   { from{opacity:1;transform:none}  to{opacity:0;transform:translateX(20px)} }
+
+/* ═══════════════════════════════════
+   WELCOME
+═══════════════════════════════════ */
+#welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 48px 32px 64px;
+  text-align: center;
+  background: #ede8f5;
+}
+
+.w-orb {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #c8bef0, #e0d8f8);
+  margin: 0 auto 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  animation: pulseOrb 3s ease-in-out infinite;
+  box-shadow: 0 8px 32px rgba(124,106,170,0.18);
+}
+@keyframes pulseOrb {
+  0%,100%{transform:scale(1);box-shadow:0 8px 32px rgba(124,106,170,0.18)}
+  50%{transform:scale(1.04);box-shadow:0 12px 40px rgba(124,106,170,0.26)}
+}
+
+.w-eyebrow {
+  font-size: 9px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--txt-soft);
+  margin-bottom: 10px;
+}
+.w-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px;
+  font-weight: 300;
+  color: var(--txt-deep);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.w-title em { font-style: italic; color: var(--accent); }
+.w-sub {
+  font-size: 12px;
+  color: var(--txt-soft);
+  margin-bottom: 48px;
+  font-weight: 300;
+}
+
+.w-stats {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 40px;
+  justify-content: center;
+}
+.w-stat {
+  padding: 8px 16px;
+  background: white;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--txt-mid);
+  border: 1px solid var(--border);
+}
+
+.btn-start {
+  width: 100%;
+  max-width: 280px;
+  padding: 17px 32px;
+  background: #fbfaf7;
+  color: var(--txt-deep);
+  border: 1px solid #d8d0c4;
+  border-radius: 40px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform .15s, opacity .15s;
+  box-shadow: 0 4px 20px rgba(80,70,95,0.14);
+}
+.btn-start:active { transform: scale(.97); opacity: .9; }
+
+/* ═══════════════════════════════════
+   HOME
+═══════════════════════════════════ */
+#home { padding-bottom: 40px; }
+
+.home-top {
+  padding: 56px 24px 28px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border2);
+}
+.home-greet {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--txt-soft);
+  margin-bottom: 4px;
+}
+.home-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  font-weight: 300;
+  color: var(--txt-deep);
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+.home-title em { font-style: italic; color: var(--accent); }
+
+/* week strip */
+.week-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.wd-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+.wd-item:active .wd-circle { transform: scale(.9); }
+.wd-lbl {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--txt-soft);
+}
+.wd-circle {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: transform .15s;
+  position: relative;
+}
+.wd-circle.is-today::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+}
+
+/* Section */
+.home-section { padding: 20px 20px 0; }
+.sec-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--txt-soft);
+  margin-bottom: 12px;
+}
+
+/* AM glance */
+.am-glance {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.am-glance-head {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border2);
+}
+.am-glance-icon {
+  width: 32px; height: 32px;
+  background: #fff5d0;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.am-glance-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--txt-soft); }
+.am-glance-title { font-size: 13px; font-weight: 500; color: var(--txt-deep); }
+.am-glance-rows { padding: 10px 16px; display: flex; flex-direction: column; gap: 7px; }
+.ag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--txt-mid);
+}
+.ag-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--border);
+  min-width: 12px;
+  line-height: 1;
+}
+.ag-badge {
+  margin-left: auto;
+  font-size: 8px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 8px;
+}
+
+/* Day buttons */
+.days-section { padding: 16px 20px 32px; }
+.day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.day-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 14px 14px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+  position: relative;
+  overflow: hidden;
+}
+.day-card:active { transform: scale(.97); }
+.day-card.is-today { border-color: var(--accent); }
+.day-card.is-today::before {
+  content: 'TODAY';
+  position: absolute;
+  top: 10px; right: 10px;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  background: var(--accent);
+  color: var(--txt-deep);
+  padding: 2px 7px;
+  border-radius: 8px;
+}
+.dc-day { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--txt-soft); margin-bottom: 4px; }
+.dc-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--txt-deep);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.dc-name em { font-style: italic; }
+.dc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 9.5px;
+  font-weight: 500;
+}
+.dc-arrow {
+  position: absolute;
+  bottom: 14px; right: 14px;
+  color: var(--border);
+  font-size: 16px;
+}
+
+/* ═══════════════════════════════════
+   DAY PAGE
+═══════════════════════════════════ */
+#daypage {}
+
+.dp-header {
+  padding: 48px 24px 0;
+  background: var(--card);
+  border-bottom: 1px solid var(--border2);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.dp-back {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--txt-soft);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  transition: color .15s;
+}
+.dp-back:active { color: var(--accent); }
+.dp-back-arrow {
+  width: 26px; height: 26px;
+  background: var(--bg2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+.dp-eyebrow { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--txt-soft); margin-bottom: 3px; }
+.dp-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--txt-deep);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.dp-title em { font-style: italic; color: var(--accent); }
+.dp-active-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* tabs */
+.dp-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 0 0 1px;
+}
+.dp-tab {
+  flex: 1;
+  padding: 11px 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--txt-soft);
+  cursor: pointer;
+  transition: all .2s;
+}
+.dp-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* progress */
+.dp-progress {
+  padding: 14px 20px 0;
+  background: var(--bg);
+}
+.dp-prog-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+}
+.dp-prog-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--txt-soft); }
+.dp-prog-count { font-size: 11px; font-weight: 500; color: var(--accent); }
+.dp-prog-bar { height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.dp-prog-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .4s ease; }
+
+/* routine body */
+.routine-body { padding: 16px 20px 80px; }
+.routine-body.hidden { display: none; }
+
+/* Cleanse notice */
+.cleanse-notice {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.cn-ico { font-size: 20px; flex-shrink: 0; }
+.cn-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--txt-soft); margin-bottom: 4px; }
+.cn-text { font-size: 11px; color: var(--txt-mid); line-height: 1.6; }
+.cn-text strong { color: var(--txt-deep); font-weight: 500; }
+
+/* SPF card */
+.spf-notice {
+  background: #fffbeb;
+  border: 1px solid #f0e8b8;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.spf-notice p { font-size: 11px; color: #7a6028; line-height: 1.5; }
+.spf-notice strong { display: block; font-weight: 600; font-size: 12px; margin-bottom: 2px; color: #5a4018; }
+
+/* Step card */
+.s-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+  transition: opacity .2s;
+  cursor: pointer;
+  position: relative;
+}
+.s-card.done { opacity: .42; }
+.s-card.done .s-name { text-decoration: line-through; text-decoration-color: var(--txt-soft); }
+
+.s-card.night { background: #f8f6fe; border-color: #e0d8f4; }
+.s-card.active-night { background: #f4f0fc; border-color: #c8b8e8; }
+.s-card.copper-night { background: #f0f4fc; border-color: #c0cce8; }
+.s-card.clay-s { background: #f0f4ee; border-color: #c0d0b8; }
+
+/* left accent bar */
+.s-accent-bar {
+  width: 3px;
+  flex-shrink: 0;
+  background: var(--border2);
+  border-radius: 0;
+}
+.s-card.active-night .s-accent-bar { background: #9b7ad0; }
+.s-card.copper-night .s-accent-bar { background: #7a9ad0; }
+.s-card.clay-s .s-accent-bar { background: #7a9a70; }
+
+.s-inner {
+  flex: 1;
+  padding: 14px 14px 14px 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.s-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--border);
+  line-height: 1;
+  min-width: 18px;
+  text-align: center;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+
+.s-body { flex: 1; min-width: 0; }
+.s-name { font-size: 12px; font-weight: 500; color: var(--txt-deep); margin-bottom: 2px; line-height: 1.3; }
+.s-prod { font-size: 10px; color: var(--txt-soft); font-weight: 300; margin-bottom: 6px; }
+.s-how { font-size: 10.5px; color: var(--txt-mid); line-height: 1.6; margin-bottom: 7px; }
+.s-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.s-badge {
+  font-size: 8.5px;
+  font-weight: 500;
+  padding: 2.5px 8px;
+  border-radius: 8px;
+}
+.b-damp { background: var(--damp-bg); color: var(--damp-txt); }
+.b-dry  { background: var(--dry-bg);  color: var(--dry-txt);  }
+.b-warn { background: var(--warn-bg); color: var(--warn-txt); }
+.b-safe { background: var(--safe-bg); color: var(--safe-txt); }
+.b-acc  { background: var(--ret-bg);  color: var(--ret-txt);  }
+.b-cop  { background: var(--rec-bg);  color: var(--rec-txt);  }
+
+.never-tag {
+  display: inline-block;
+  margin-top: 7px;
+  font-size: 8.5px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 8px;
+  background: var(--warn-bg);
+  color: var(--warn-txt);
+}
+
+/* check */
+.s-check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+  transition: all .2s;
+}
+.s-card.done .s-check {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.s-check svg { display: none; }
+.s-card.done .s-check svg { display: block; }
+
+/* wait connector */
+.wait-conn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 0 47px;
+  height: 26px;
+  margin-bottom: 8px;
+}
+.wait-line { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+.wait-tag {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--wait-txt);
+  background: var(--wait-bg);
+  padding: 2px 9px;
+  border-radius: 8px;
+}
+
+
+/* ── MOBILE UX FIXES / RESPONSIVE POLISH ─────────── */
+html { background:#f7f5ef; }
+body {
+  background:#f7f5ef;
+  overscroll-behavior-y: contain;
+}
+button { font: inherit; }
+.screen {
+  width: min(100vw, 480px);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  min-height: 100dvh;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 0 40px rgba(42,31,61,.06);
+}
+:root {
+  --bg:        #f4f0e8;
+  --bg2:       #faf8f2;
+  --card:      #fffefd;
+  --border:    #e3dccd;
+  --border2:   #eee8dc;
+  --txt-deep:  #2d2638;
+  --txt-mid:   #6f6474;
+  --txt-soft:  #a3979b;
+  --accent:    #e7dfd1;
+  --accent-bg: #fbfaf7;
+  --ret-bg:    #fbfaf7;  --ret-txt: #5a4568;
+  --lac-bg:    #f6fbf7;  --lac-txt: #2d7050;
+  --rec-bg:    #f8faff;  --rec-txt: #2d5c84;
+  --sal-bg:    #fff8f5;  --sal-txt: #8a4d38;
+}
+.btn-start {
+  background:#fbfaf7;
+  color:var(--txt-deep);
+  border:1px solid #ded6c7;
+  box-shadow:0 8px 24px rgba(94,79,54,.12);
+  min-height:52px;
+}
+.day-card,
+.dp-back,
+.dp-tab,
+.s-card { touch-action: manipulation; }
+.dp-back-arrow,
+.wd-circle,
+.s-check { min-width: 34px; min-height: 34px; }
+.day-card { min-height: 118px; }
+.dp-tab { min-height: 46px; }
+.am-glance { box-shadow: 0 8px 24px rgba(42,31,61,.035); }
+.ag-row {
+  align-items:flex-start;
+  gap:8px;
+  line-height:1.55;
+  flex-wrap:wrap;
+  overflow-wrap:anywhere;
+}
+.ag-num {
+  font-family:'DM Sans', sans-serif;
+  font-style:normal;
+  font-size:10px;
+  font-weight:600;
+  min-width:42px;
+  color:#8a7c8a;
+  background:#fbfaf7;
+  border:1px solid #eee8dc;
+  border-radius:999px;
+  padding:2px 7px;
+  text-align:center;
+}
+.ag-badge { margin-left:0; white-space:nowrap; }
+.s-inner { padding:15px 14px 15px 12px; }
+.s-name { font-size:13px; }
+.s-prod { font-size:10.5px; line-height:1.45; }
+.s-how { font-size:11px; line-height:1.65; }
+.cleanse-notice,
+.spf-notice { box-shadow:0 8px 24px rgba(42,31,61,.035); }
+.dp-progress {
+  position:sticky;
+  top:137px;
+  z-index:15;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(227,220,205,.5);
+}
+@media (max-width: 380px) {
+  .home-top { padding:44px 16px 22px; }
+  .home-section, .days-section, .routine-body { padding-left:14px; padding-right:14px; }
+  .w-title { font-size:48px; }
+  .home-title { font-size:34px; }
+  .dp-title { font-size:32px; }
+  .day-grid { grid-template-columns:1fr; }
+  .ag-num { min-width:38px; }
+  .s-inner { gap:9px; }
+}
+@media (min-width: 481px) {
+  .screen { border-left:1px solid #e7dfd1; border-right:1px solid #e7dfd1; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME ═══════════════════════ -->
+<div class="screen" id="welcome">
+  <div class="w-orb">🌸</div>
+  <p class="w-eyebrow">Your daily</p>
+  <h1 class="w-title">Skin<em>care</em><br>Ritual</h1>
+  <p class="w-sub">AM · PM · Weekly actives</p>
+  <div class="w-stats">
+    <div class="w-stat">☀️ Real AM routine</div>
+    <div class="w-stat">🌙 Safe active nights</div>
+    <div class="w-stat">📦 Full product shelf</div>
+  </div>
+  <button class="btn-start" onclick="goHome()">Start →</button>
+</div>
+
+<!-- ══ HOME ══════════════════════════ -->
+<div class="screen hidden" id="home">
+  <div class="home-top">
+    <p class="home-greet">Good morning, Nida</p>
+    <h2 class="home-title">Your <em>Ritual</em></h2>
+    <div class="week-row" id="weekRow"></div>
+  </div>
+
+  <div class="home-section" style="padding-top:20px">
+    <p class="sec-label">Quick product groups</p>
+    <div class="am-glance">
+      <div class="am-glance-head">
+        <div class="am-glance-icon" style="background:#fbfaf7">🧭</div>
+        <div>
+          <div class="am-glance-label">Simple guide</div>
+          <div class="am-glance-title">What each product type means</div>
+        </div>
+      </div>
+      <div class="am-glance-rows">
+        <div class="ag-row"><span class="ag-num">Actives</span>The Ordinary Granactive Retinoid · The Ordinary Niacinamide · The Ordinary Copper Peptides · Perricone Vitamin C Mist</div>
+        <div class="ag-row"><span class="ag-num">Acids</span>Sunday Riley Good Genes Lactic Acid · The Ordinary Glycolic Toner · The Ordinary Salicylic Acid · Neutrogena Acne Wash</div>
+        <div class="ag-row"><span class="ag-num">Gentle wash</span>CeraVe Foaming Cleanser · Yves Rocher Pure Menthe</div>
+        <div class="ag-row"><span class="ag-num">Occasional</span>Melano CC Enzyme Wash · Bioré Face Wash · Zion Refining Clay Cleansing Powder · Innisfree Clay Mask</div>
+        <div class="ag-row"><span class="ag-num">Barrier</span>The Ordinary Hyaluronic Acid · Zion Mushroom Serum · COSRX Snail 92 · CeraVe Cream · Laneige Lip Mask</div>
+        <div class="ag-row"><span class="ag-num">Eyes</span>Choose one: The Ordinary Eye Serum · L’Oréal Eye Defense · Perricone Eye Gel/Balm</div>
+      </div>
+    </div>
+
+    <p class="sec-label" style="margin-top:16px">Morning — use in this order</p>
+    <div class="am-glance">
+      <div class="am-glance-head">
+        <div class="am-glance-icon">☀️</div>
+        <div>
+          <div class="am-glance-label">Daily · AM</div>
+          <div class="am-glance-title">Product list</div>
+        </div>
+      </div>
+      <div class="am-glance-rows">
+        <div class="ag-row"><span class="ag-num">1</span>CeraVe Foaming Cleanser OR Yves Rocher Pure Menthe<span class="ag-badge b-safe">wet face</span></div>
+        <div class="ag-row"><span class="ag-num">2</span>Perricone MD Vitamin C Face Mist<span class="ag-badge b-damp">damp face</span></div>
+        <div class="ag-row"><span class="ag-num">3</span>The Ordinary Hyaluronic Acid 2% + B5<span class="ag-badge b-damp">damp face</span></div>
+        <div class="ag-row"><span class="ag-num">4</span>The Ordinary Niacinamide 10% + Zinc 1%<span class="ag-badge b-dry">mostly dry</span></div>
+        <div class="ag-row"><span class="ag-num">5</span>One eye product only: The Ordinary Eye Serum OR L’Oréal OR Perricone</div>
+        <div class="ag-row"><span class="ag-num">6</span>COSRX Snail 92 OR CeraVe Moisturizing Cream</div>
+        <div class="ag-row"><span class="ag-num">7</span>Neutrogena Beach Defense SPF 70<span class="ag-badge" style="background:#fff9d8;color:#7a6028">last</span></div>
+      </div>
+    </div>
+
+    <p class="sec-label" style="margin-top:16px">AM — exact products by day</p>
+    <div class="am-glance">
+      <div class="am-glance-head">
+        <div class="am-glance-icon" style="background:#fbfaf7">☀️</div>
+        <div>
+          <div class="am-glance-label">AM · By day</div>
+          <div class="am-glance-title">Same safe morning routine every day</div>
+        </div>
+      </div>
+      <div class="am-glance-rows">
+        <div class="ag-row"><span class="ag-num">Mon</span>CeraVe Foaming Cleanser or Yves Rocher → Perricone Vitamin C Mist → The Ordinary Hyaluronic Acid → The Ordinary Niacinamide → one eye product → COSRX Snail 92 or CeraVe Cream → Neutrogena SPF 70</div>
+        <div class="ag-row"><span class="ag-num">Tue</span>CeraVe Foaming Cleanser or Yves Rocher → Perricone Vitamin C Mist → The Ordinary Hyaluronic Acid → The Ordinary Niacinamide → one eye product → COSRX Snail 92 or CeraVe Cream → Neutrogena SPF 70</div>
+        <div class="ag-row"><span class="ag-num">Wed</span>CeraVe Foaming Cleanser or Yves Rocher → Perricone Vitamin C Mist → The Ordinary Hyaluronic Acid → The Ordinary Niacinamide → one eye product → COSRX Snail 92 or CeraVe Cream → Neutrogena SPF 70</div>
+        <div class="ag-row"><span class="ag-num">Thu</span>CeraVe Foaming Cleanser or Yves Rocher → Perricone Vitamin C Mist → The Ordinary Hyaluronic Acid → The Ordinary Niacinamide → one eye product → COSRX Snail 92 or CeraVe Cream → Neutrogena SPF 70</div>
+        <div class="ag-row"><span class="ag-num">Fri</span>CeraVe Foaming Cleanser or Yves Rocher → Perricone Vitamin C Mist → The Ordinary Hyaluronic Acid → The Ordinary Niacinamide → one eye product → COSRX Snail 92 or CeraVe Cream → Neutrogena SPF 70</div>
+        <div class="ag-row"><span class="ag-num">Sat</span>Water rinse or CeraVe only → Perricone Vitamin C Mist → The Ordinary Hyaluronic Acid → skip Niacinamide if skin feels dry → one eye product → COSRX Snail 92 or CeraVe Cream → Neutrogena SPF 70</div>
+        <div class="ag-row"><span class="ag-num">Sun</span>Gentle morning: water rinse or CeraVe → Perricone Vitamin C Mist → The Ordinary Hyaluronic Acid → one eye product → COSRX Snail 92 or CeraVe Cream → Neutrogena SPF 70</div>
+      </div>
+      <div style="margin:0 12px 12px;padding:10px 12px;background:#fbfaf7;border-radius:10px;border:1px solid #e7dfd2">
+        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#7c6aaa;margin-bottom:6px">AM note</div>
+        <div style="font-size:10.5px;color:#6b5e8a;line-height:1.6">Do not use Melano, Bioré, acne wash, glycolic toner, salicylic acid, Good Genes, retinoid, or clay mask in the morning. Keep morning simple and SPF-focused.</div>
+      </div>
+    </div>
+
+    <p class="sec-label" style="margin-top:16px">Evening — weekly product map</p>
+    <div class="am-glance">
+      <div class="am-glance-head">
+        <div class="am-glance-icon" style="background:#f8f6fe">🌙</div>
+        <div>
+          <div class="am-glance-label">PM · By night</div>
+          <div class="am-glance-title">Exact products for each night</div>
+        </div>
+      </div>
+      <div class="am-glance-rows">
+        <div class="ag-row"><span class="ag-num">Mon</span>CeraVe or Yves Rocher → Niacinamide optional → Granactive Retinoid → COSRX Snail 92 or CeraVe Cream → Laneige Lip Mask</div>
+        <div class="ag-row"><span class="ag-num">Tue</span>Melano CC Enzyme Wash → Zion Mushroom Serum → Copper Peptides → one eye product → COSRX or CeraVe → Laneige</div>
+        <div class="ag-row"><span class="ag-num">Wed</span>CeraVe or Yves Rocher → Sunday Riley Good Genes → Zion Mushroom Serum or Hyaluronic Acid → COSRX or CeraVe → Laneige</div>
+        <div class="ag-row"><span class="ag-num">Thu</span>Recovery night: CeraVe or Yves Rocher → Zion Mushroom Serum → one eye product → CeraVe Cream or COSRX. Glycolic toner is optional every other week only.</div>
+        <div class="ag-row"><span class="ag-num">Fri</span>CeraVe or Yves Rocher → Niacinamide optional → Granactive Retinoid → COSRX Snail 92 or CeraVe Cream → Laneige</div>
+        <div class="ag-row"><span class="ag-num">Sat</span>CeraVe or Yves Rocher → Innisfree Clay Mask → Zion Mushroom Serum → Copper Peptides if skin feels calm → CeraVe Cream or COSRX → Laneige</div>
+        <div class="ag-row"><span class="ag-num">Sun</span>Acne option only if needed: Neutrogena Acne Wash OR Salicylic Acid spot treatment → Zion Mushroom Serum or Hyaluronic Acid → COSRX or CeraVe</div>
+      </div>
+      <div style="margin:0 12px 12px;padding:10px 12px;background:#fbfaf7;border-radius:10px;border:1px solid #e7dfd2">
+        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#7c6aaa;margin-bottom:6px">Important</div>
+        <div style="font-size:10.5px;color:#6b5e8a;line-height:1.6">Use only one strong active night. Do not combine retinoid, Good Genes, glycolic toner, salicylic acid, acne wash, Bioré, Melano, Zion clay powder, or Innisfree clay mask in the same evening. Glycolic toner is not a weekly must because Good Genes is already an acid night.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="days-section">
+    <p class="sec-label">Choose a day</p>
+    <div class="day-grid" id="dayGrid"></div>
+  </div>
+</div>
+
+<!-- ══ DAY PAGE ═══════════════════════ -->
+<div class="screen hidden" id="daypage">
+  <div class="dp-header">
+    <button class="dp-back" onclick="goBack()">
+      <div class="dp-back-arrow">‹</div>
+      All days
+    </button>
+    <p class="dp-eyebrow" id="dp-ey"></p>
+    <h2 class="dp-title" id="dp-ti"></h2>
+    <div class="dp-active-pill" id="dp-pill"></div>
+    <div class="dp-tabs">
+      <button class="dp-tab active" id="t-am" onclick="setTab('am')">☀️ Morning</button>
+      <button class="dp-tab" id="t-pm" onclick="setTab('pm')">🌙 Evening</button>
+    </div>
+  </div>
+
+  <div class="dp-progress">
+    <div class="dp-prog-row">
+      <span class="dp-prog-label" id="prog-lbl">Morning</span>
+      <span class="dp-prog-count" id="prog-cnt">0 / 6</span>
+    </div>
+    <div class="dp-prog-bar"><div class="dp-prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="routine-body" id="body-am"></div>
+  <div class="routine-body hidden" id="body-pm"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────
+// Updated for Nida's real product shelf: gentle daily basics + safe active rotation.
+const DAYS = [
+  { key:'mon', name:'Monday',    active:'retinoid', label:'⭐ Retinoid',        bg:'var(--ret-bg)', fg:'var(--ret-txt)', extras:[] },
+  { key:'tue', name:'Tuesday',   active:'recovery', label:'💜 Copper Recovery',bg:'var(--rec-bg)', fg:'var(--rec-txt)', extras:['copper'] },
+  { key:'wed', name:'Wednesday', active:'lactic',   label:'🌿 Good Genes',      bg:'var(--lac-bg)', fg:'var(--lac-txt)', extras:[] },
+  { key:'thu', name:'Thursday',  active:'recovery2', label:'💧 Recovery / Optional Glycolic',  bg:'var(--rec-bg)', fg:'var(--rec-txt)', extras:[] },
+  { key:'fri', name:'Friday',    active:'retinoid', label:'⭐ Retinoid',        bg:'var(--ret-bg)', fg:'var(--ret-txt)', extras:[] },
+  { key:'sat', name:'Saturday',  active:'clay',     label:'🌋 Innisfree Clay + Recovery',bg:'var(--rec-bg)', fg:'var(--rec-txt)', extras:['copper','clay'] },
+  { key:'sun', name:'Sunday',    active:'salicylic',label:'✦ Acne / SA',       bg:'var(--sal-bg)', fg:'var(--sal-txt)', extras:[] },
+];
+
+const AM = [
+  { n:'1', name:'Cleanse or Water Rinse', prod:'CeraVe Foaming Cleanser OR Yves Rocher Pure Menthe', how:'First, make your face wet with lukewarm water. Apply one cleanser to wet skin, massage gently for 30–45 seconds, then rinse completely. Pat with a towel but leave your face slightly damp. If your skin feels dry that morning, skip cleanser and just rinse with water.', skin:'wet', wait:null },
+  { n:'2', name:'Vitamin C Mist', prod:'Perricone MD Vitamin C Face Mist', how:'Spray 2–3 light mists onto clean skin. Your face should feel damp, not dripping. Let it sit for a few seconds before serum.', skin:'damp', wait:'30 sec' },
+  { n:'3', name:'The Ordinary Hyaluronic Acid', prod:'The Ordinary Hyaluronic Acid 2% + B5', how:'While your skin is still damp from the mist, apply 2–3 drops. Press it into your face with flat palms. Do not apply hyaluronic acid to totally dry skin.', skin:'damp', wait:'30 sec' },
+  { n:'4', name:'Oil / Pore Support', prod:'The Ordinary Niacinamide 10% + Zinc 1%', how:'Wait until the previous layer is mostly absorbed. Use 1–2 drops on the T-zone and cheeks. If it pills, use less or skip this in the morning.', skin:'dry', wait:'1 min' },
+  { n:'5', name:'Eye Care', prod:'Choose ONE: The Ordinary Eye Serum OR L’Oréal Eye Defense OR Perricone Eye Gel', how:'Pick only one eye product. Use a rice-grain amount per eye. Tap around the orbital bone with your ring finger. Do not put it too close to your lash line.', skin:'dry', wait:'20 sec' },
+  { n:'6', name:'Moisturizer', prod:'COSRX Advanced Snail 92 Cream OR CeraVe Moisturizing Cream', how:'Use COSRX Snail 92 as your normal moisturizer. If your skin feels dry, tight, or irritated, use CeraVe Cream instead or add a thin layer only on dry areas.', skin:'any', wait:'1 min' },
+];
+
+
+function cleanseLineFor(day) {
+  if (day.active === 'retinoid') return '<strong>Step 0:</strong> Make your face wet. Cleanse with <strong>CeraVe Foaming Cleanser</strong> or <strong>Yves Rocher Pure Menthe</strong>. Rinse fully, then pat completely dry. Retinoid needs dry skin.';
+  if (day.active === 'recovery') return '<strong>Step 0:</strong> Make your face wet. Use <strong>Melano CC Deep Clear Enzyme Wash</strong> tonight. Lather in your hands first, massage gently, rinse fully, then pat dry. This is how Melano fits into the plan.';
+  if (day.active === 'lactic') return '<strong>Step 0:</strong> Make your face wet. Cleanse gently with <strong>CeraVe</strong> or <strong>Yves Rocher</strong>. Rinse, then pat completely dry before Good Genes.';
+  if (day.active === 'recovery2') return '<strong>Step 0:</strong> Make your face wet. Cleanse gently with <strong>CeraVe</strong> or <strong>Yves Rocher</strong>. Rinse fully, then leave skin slightly damp for barrier support. If you choose the optional glycolic toner this week, pat completely dry first.';
+  if (day.active === 'clay') return '<strong>Step 0:</strong> Make your face wet. Cleanse with <strong>CeraVe</strong> or <strong>Yves Rocher</strong>, rinse, and pat completely dry. The Innisfree Clay Mask is the next step card. Do not use Melano, Bioré, acne wash, acids, retinoid, or Zion clay powder tonight.';
+  if (day.active === 'salicylic') return '<strong>Step 0:</strong> Make your face wet. Use a gentle cleanser first. Then choose either <strong>Neutrogena Acne Wash</strong> or <strong>The Ordinary Salicylic Acid 2%</strong>, not both.';
+  return '<strong>Step 0:</strong> Cleanse gently.';
+}
+
+function getPM(day) {
+  const steps = [];
+
+  if (day.active === 'retinoid') {
+    steps.push({ n:'1', name:'Optional Niacinamide Buffer', prod:'The Ordinary Niacinamide 10% + Zinc 1%', how:'After cleansing, wait until your face is fully dry. Apply 1–2 drops. This step is optional. Skip it if your skin feels sensitive.', skin:'dry', wait:'1 min', night:true });
+    steps.push({ n:'2', name:'Retinoid', prod:'The Ordinary Granactive Retinoid 2% Emulsion', how:'Keep your face completely dry. Apply a thin layer or 2–3 drops. Avoid eyelids, under-eyes, corners of the mouth, and sides of the nose. Then wait before moisturizer.', skin:'dry', wait:'5 min', activeNight:true, never:'Do not use Good Genes, glycolic toner, salicylic acid, acne wash, Bioré, Melano, or clay tonight.' });
+    steps.push({ n:'3', name:'Moisturizer Layer', prod:'COSRX Snail 92 OR CeraVe Cream', how:'After the retinoid wait, do not add acids or copper. Apply a simple moisturizer. Use CeraVe Cream if you feel dry or sensitive; use COSRX Snail 92 if your skin feels normal.', skin:'any', wait:'1 min', night:true });
+    steps.push({ n:'4', name:'Eye Care', prod:'L’Oréal Eye Defense OR The Ordinary Eye Serum', how:'Use one eye product only. Tap gently around the orbital bone. Keep it away from the retinoid area if your eyes get sensitive.', skin:'dry', wait:'20 sec', night:true });
+    steps.push({ n:'5', name:'Lips', prod:'Laneige Lip Sleeping Mask', how:'Apply Laneige only to lips as the final step.', skin:'any', wait:null, night:true });
+    return steps;
+  }
+
+  if (day.active === 'recovery') {
+    steps.push({ n:'1', name:'Zion Mushroom Serum', prod:'Zion Ultimate Renew Multi Mushroom Hydration Serum', how:'After Melano and rinsing, leave skin slightly damp. Apply 2–3 drops and press into face and neck.', skin:'damp', wait:'30 sec', night:true });
+    steps.push({ n:'2', name:'Copper Peptides', prod:'The Ordinary Multi-Peptide + Copper Peptides 1%', how:'Apply 2–3 drops after the hydration layer settles. This is a recovery-night product, so do not use it with exfoliating acids or retinoid.', skin:'dry', wait:'1 min', copperStep:true, never:'Do not combine copper peptides with Good Genes, glycolic toner, salicylic acid, acne wash, or retinoid.' });
+    steps.push({ n:'3', name:'Eye Care', prod:'Choose ONE eye product', how:'Use The Ordinary Eye Serum, L’Oréal Eye Defense, Perricone Eye Gel, or Perricone Eye Balm. Pick one, not all together.', skin:'dry', wait:'20 sec', night:true });
+    steps.push({ n:'4', name:'Moisturizer + Lips', prod:'COSRX Snail 92 / CeraVe Cream + Laneige Lip Mask', how:'Seal with Snail 92 or CeraVe Cream. Finish with Laneige on lips.', skin:'any', wait:null, night:true });
+    return steps;
+  }
+
+  if (day.active === 'lactic') {
+    steps.push({ n:'1', name:'Lactic Acid Treatment', prod:'Sunday Riley Good Genes', how:'Your face must be clean and dry. Apply a thin layer. Do not rinse it off. This is your only active tonight.', skin:'dry', wait:'5 min', activeNight:true, never:'Do not use retinoid, glycolic toner, salicylic acid, acne wash, Bioré, Melano, Innisfree clay mask, Zion clay powder, or copper peptides tonight.' });
+    steps.push({ n:'2', name:'Zion Mushroom Serum or Hyaluronic Acid', prod:'Zion Ultimate Renew Multi Mushroom Serum OR The Ordinary Hyaluronic Acid 2% + B5', how:'After waiting, lightly dampen your skin with mist or water if needed. Press in one hydrating serum.', skin:'damp', wait:'30 sec', night:true });
+    steps.push({ n:'3', name:'Eye + Moisturizer + Lips', prod:'One eye product + COSRX/CeraVe + Laneige', how:'Use one eye product, then moisturizer. Use CeraVe if you feel dry. Finish with Laneige on lips.', skin:'any', wait:null, night:true });
+    return steps;
+  }
+
+  if (day.active === 'recovery2') {
+    steps.push({ n:'1', name:'Barrier Serum', prod:'Zion Ultimate Renew Multi Mushroom Serum OR The Ordinary Hyaluronic Acid 2% + B5', how:'After cleansing, leave your skin slightly damp. Apply one hydrating serum only. Choose Zion Mushroom Serum if you want calming hydration, or Hyaluronic Acid if your skin only needs water-binding hydration.', skin:'damp', wait:'30 sec', night:true });
+    steps.push({ n:'2', name:'Optional Glycolic Swap', prod:'The Ordinary Glycolic Acid 7% Toner · every other week only', how:'Use this only if your skin is not irritated and you did not use Good Genes recently. If using it, apply to clean dry skin before the barrier serum, wait 5 minutes, then continue. Skip this step most weeks.', skin:'dry', wait:'optional', optionalStep:true, never:'Do not use glycolic with Good Genes, retinoid, salicylic acid, acne wash, Melano, Bioré, Innisfree clay mask, Zion clay powder, or copper peptides.' });
+    steps.push({ n:'3', name:'Eye Care', prod:'Choose ONE eye product', how:'Use one eye product only. Tap gently around the orbital bone. Do not layer multiple eye creams together.', skin:'dry', wait:'20 sec', night:true });
+    steps.push({ n:'4', name:'Moisturizer + Lips', prod:'COSRX Snail 92 OR CeraVe Cream + Laneige Lip Mask', how:'Seal with moisturizer. Use CeraVe Cream if your skin feels dry. Finish with Laneige on lips.', skin:'any', wait:null, night:true });
+    return steps;
+  }
+
+  if (day.active === 'clay') {
+    steps.push({ n:'1', name:'Innisfree Clay Mask', prod:'Innisfree Volcanic Pore Clay Mask', how:'After gentle cleansing, your face must be clean and dry. Apply a thin even layer. Avoid eye area, corners of nose, and lips. Leave 10–12 minutes, then rinse completely. Do not let it crack for too long.', skin:'dry', wait:'10–12 min, then rinse', clayStep:true, never:'Do not use acids, retinoid, Melano, Bioré, acne wash, or Zion clay powder tonight.' });
+    steps.push({ n:'2', name:'Zion Mushroom Serum', prod:'Zion Ultimate Renew Multi Mushroom Hydration Serum', how:'After rinsing the Innisfree Clay Mask completely, leave your face slightly damp. Apply 2–3 drops and press in.', skin:'damp', wait:'30 sec', night:true });
+    steps.push({ n:'3', name:'Copper Peptides', prod:'The Ordinary Multi-Peptide + Copper Peptides 1%', how:'Apply 2–3 drops only if your skin feels calm after the mask. Skip copper if your skin feels tight, hot, or irritated.', skin:'dry', wait:'1 min', copperStep:true, never:'Skip copper if your skin feels irritated after the Innisfree clay mask.' });
+    steps.push({ n:'4', name:'Moisturizer + Lips', prod:'CeraVe Cream or COSRX Snail 92 + Laneige', how:'Use CeraVe Cream if the clay mask makes you feel dry. Finish with Laneige on lips.', skin:'any', wait:null, night:true });
+    return steps;
+  }
+
+  if (day.active === 'salicylic') {
+    steps.push({ n:'1', name:'Acne Step — Choose One', prod:'Neutrogena Acne Wash OR The Ordinary Salicylic Acid 2%', how:'Option A: use Neutrogena Acne Wash on wet skin, rinse, and stop there. Option B: use a gentle cleanser first, pat dry, then apply Salicylic Acid only to oily or congested areas. Do not use both.', skin:'dry', wait:'5 min', activeNight:true, never:'Do not use retinoid, Good Genes, glycolic toner, Bioré, Melano, Innisfree clay mask, Zion clay powder, or copper peptides tonight.' });
+    steps.push({ n:'2', name:'Zion Mushroom Serum or Hyaluronic Acid', prod:'Zion Ultimate Renew Multi Mushroom Serum OR The Ordinary Hyaluronic Acid 2% + B5', how:'After the acne step, make skin slightly damp and apply one hydrating serum.', skin:'damp', wait:'30 sec', night:true });
+    steps.push({ n:'3', name:'Moisturizer + Lips', prod:'COSRX Snail 92 OR CeraVe Cream + Laneige', how:'Seal with moisturizer. If skin feels irritated, skip acne night next week and make Sunday recovery.', skin:'any', wait:null, night:true });
+    return steps;
+  }
+
+  return steps;
+}
+
+// ── STATE ──────────────────────────────────────
+let currentDay = null, currentTab = 'am';
+
+function todayIdx() {
+  return [6,0,1,2,3,4,5][new Date().getDay()];
+}
+
+// ── NAV ───────────────────────────────────────
+function transition(from, to, dir='fwd') {
+  const f = document.getElementById(from), t = document.getElementById(to);
+  const outCls = dir==='fwd' ? 'leaving' : 'leaving-back';
+  const inCls  = dir==='fwd' ? 'entering' : 'entering-back';
+  f.classList.add(outCls);
+  setTimeout(() => { f.classList.add('hidden'); f.classList.remove(outCls); }, 240);
+  t.classList.remove('hidden');
+  t.classList.add(inCls);
+  setTimeout(() => t.classList.remove(inCls), 320);
+}
+
+function goHome()         { transition('welcome','home','fwd'); buildHome(); }
+function goDay(key)       { currentDay=DAYS.find(d=>d.key===key); buildDay(currentDay); transition('home','daypage','fwd'); setTab('am'); }
+function goBack()         { transition('daypage','home','back'); }
+
+// ── BUILD HOME ────────────────────────────────
+function buildHome() {
+  buildWeek();
+  buildDayGrid();
+}
+
+function buildWeek() {
+  const today = todayIdx();
+  const el = document.getElementById('weekRow');
+  el.innerHTML = DAYS.map((d,i) => `
+    <div class="wd-item" onclick="goDay('${d.key}')">
+      <div class="wd-lbl">${d.name.slice(0,2)}</div>
+      <div class="wd-circle${i===today?' is-today':''}" style="background:${d.bg}">
+        ${d.active==='retinoid'?'⭐':d.active==='lactic'?'🌿':d.active==='recovery'?'💜':'✦'}
+      </div>
+    </div>`).join('');
+}
+
+function buildDayGrid() {
+  const today = todayIdx();
+  document.getElementById('dayGrid').innerHTML = DAYS.map((d,i) => `
+    <div class="day-card${i===today?' is-today':''}" onclick="goDay('${d.key}')">
+      <div class="dc-day">${d.name.slice(0,3)}</div>
+      <div class="dc-name">${d.name.slice(0,3)}<em>${d.name.slice(3)}</em></div>
+      <div class="dc-tag" style="background:${d.bg};color:${d.fg}">${d.label}</div>
+      <div class="dc-arrow">›</div>
+    </div>`).join('');
+}
+
+// ── BUILD DAY ─────────────────────────────────
+function buildDay(day) {
+  document.getElementById('dp-ey').textContent = day.name;
+  document.getElementById('dp-ti').innerHTML = day.name.slice(0,3) + '<em>' + day.name.slice(3) + '</em>';
+  const pill = document.getElementById('dp-pill');
+  pill.textContent = day.label + ' tonight';
+  pill.style.background = day.bg; pill.style.color = day.fg;
+
+  buildAM(day);
+  buildPM(day);
+}
+
+function buildAM(day) {
+  const el = document.getElementById('body-am');
+  let html = `
+    <div class="cleanse-notice">
+      <span class="cn-ico">🚿</span>
+      <div>
+        <div class="cn-label">Morning rule</div>
+        <div class="cn-text"><strong>Order matters:</strong> wet face → cleanse → leave skin damp → mist → hydrating serum → let skin dry → niacinamide → eye → moisturizer → SPF.</div>
+      </div>
+    </div>`;
+
+  AM.forEach((s, i) => {
+    const id = `am-${i}`;
+    html += stepCard(s, id, 'am', false) + (s.wait ? waitConn(s.wait, false) : '');
+  });
+
+  html += `
+    <div class="spf-notice">
+      <span style="font-size:22px">🛡️</span>
+      <p><strong>Step 7 · Neutrogena Beach Defense SPF 70</strong> Apply as the final morning step. Use enough to cover face and neck. Do not mix it into moisturizer.</p>
+    </div>
+    <div class="cleanse-notice" style="margin-top:10px;background:#fff;border-color:#ece7f7">
+      <span class="cn-ico">👁️</span>
+      <div>
+        <div class="cn-label">Extra eye products</div>
+        <div class="cn-text"><strong>L’Oréal Eye Defense</strong> can be your simple eye cream. <strong>Perricone MD Vitamin C Ester Eye Gel</strong> can be used in the morning 2–4x/week. Do not layer all eye products together.</div>
+      </div>
+    </div>`;
+
+  el.innerHTML = html;
+}
+
+function buildPM(day) {
+  const el = document.getElementById('body-pm');
+  let html = `
+    <div class="cleanse-notice" style="background:#f8f6fe;border-color:#e0d8f4">
+      <span class="cn-ico">🧴</span>
+      <div>
+        <div class="cn-label">Before the routine</div>
+        <div class="cn-text">${cleanseLineFor(day)}<br><br><strong>Bioré facial wash</strong> is not a daily step here. Use it only once in a while on a non-active night if it feels scrubby or exfoliating.</div>
+      </div>
+    </div>`;
+
+  const steps = getPM(day);
+  steps.forEach((s, i) => {
+    const id = `pm-${i}`;
+    html += stepCard(s, id, 'pm', true) + (s.wait ? waitConn(s.wait, true) : '');
+  });
+
+  
+
+
+  el.innerHTML = html;
+}
+
+function stepCard(s, id, type, isNight) {
+  const skinBadge = s.skin==='damp' ? `<span class="s-badge b-damp">💧 Damp skin</span>` : s.skin==='dry' ? `<span class="s-badge b-dry">✋ Dry skin</span>` : s.skin==='wet' ? `<span class="s-badge b-safe">🚿 Wet skin</span>` : '';
+  const extraBadge = s.copperStep ? `<span class="s-badge b-cop">💜 Recovery only</span>` : s.activeNight ? `<span class="s-badge b-acc">Active tonight</span>` : s.optionalStep ? `<span class="s-badge b-warn">✦ Optional</span>` : '';
+  const cardCls = s.activeNight ? 'active-night' : s.copperStep ? 'copper-night' : s.clayStep ? 'clay-s' : isNight ? 'night' : '';
+  return `
+    <div class="s-card ${cardCls}" id="${id}" onclick="toggle('${id}','${type}')">
+      <div class="s-accent-bar"></div>
+      <div class="s-inner">
+        <div class="s-num">${s.n}</div>
+        <div class="s-body">
+          <div class="s-name">${s.name}</div>
+          <div class="s-prod">${s.prod}</div>
+          <div class="s-how">${s.how}</div>
+          <div class="s-badges">${skinBadge}${extraBadge}</div>
+          ${s.never?`<div class="never-tag">${s.never}</div>`:''}
+        </div>
+        <div class="s-check">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+            <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>`;
+}
+
+function waitConn(txt, isNight) {
+  return `<div class="wait-conn"><div class="wait-line"></div><div class="wait-tag">⏳ ${txt}</div></div>`;
+}
+
+// ── TABS + PROGRESS ───────────────────────────
+function setTab(tab) {
+  currentTab = tab;
+  document.getElementById('body-am').classList.toggle('hidden', tab!=='am');
+  document.getElementById('body-pm').classList.toggle('hidden', tab!=='pm');
+  document.getElementById('t-am').classList.toggle('active', tab==='am');
+  document.getElementById('t-pm').classList.toggle('active', tab==='pm');
+  updateProg();
+}
+
+function toggle(id, type) {
+  document.getElementById(id)?.classList.toggle('done');
+  updateProg();
+}
+
+function updateProg() {
+  const body = currentTab==='am' ? 'body-am' : 'body-pm';
+  const cards = document.querySelectorAll(`#${body} .s-card`);
+  const done  = document.querySelectorAll(`#${body} .s-card.done`).length;
+  const total = cards.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-cnt').textContent = `${done} / ${total}`;
+  document.getElementById('prog-lbl').textContent = currentTab==='am' ? 'Morning' : 'Evening';
+}
+
+// init
+buildHome();
+</script>
+</body>
+</html>
